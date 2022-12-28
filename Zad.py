@@ -1,21 +1,17 @@
 from collections import namedtuple
 
 class LogLine:
-    def __init__(self, zap):
+    def __init__(self,zap):
         self.full = zap
         self.remote_addr = zap.partition(' -')[0]
-        self.remote_user = zap.partition('- ')[2].partition(' [')[0]
         self.time_local = zap.partition('[')[2].partition(']')[0]
         self.request = zap.partition('] "')[2].partition('"')[0]
         self.status = zap.partition('" ')[2].partition(' ')[0]
-        self.body_bytes_sent = zap.partition('" ')[2].partition(' ')[2].partition(' "')[0]
-        self.http_referer = zap.partition(' "')[2].partition(' "')[2].partition('"')[0]
-        self.http_user_agent = zap.partition(' "')[2].partition(' "')[2].partition(' "')[2].partition('"')[0]
-        
+                
 metods = 'CONNECT DELETE GET HEAD OPTIONS POST PUT TRACE'.split()
 ChekAd = ''
 ChekTm = ''
-buf = ''
+buf = []
 err = 0
 f = open('test1.txt','r')
 for line in f:
@@ -36,16 +32,17 @@ for line in f:
         buf += line
     else:
         if err > 0:
-            print(ChekAd,'\n',buf)
+            print(ChekAd,'\n',"".join(buf))
         ChekAd = h.remote_addr
         ChekTm = h.time_local
         kolT = 0
         kolR = 0
-        buf = ''
+        buf = []
         err = 0
         if not (h.request.partition(' ')[0] in metods):
             err += 1
         buf += line
 if err > 0:
-        print(ChekAd,'\n',buf)
+        print(ChekAd,'\n',"".join(buf))
+print(buf)
 f.close()
